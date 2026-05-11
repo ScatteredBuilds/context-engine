@@ -1,0 +1,17 @@
+[
+  {
+    "query": "What do my notes say about attention heads?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve context about attention heads and cite the sample note"
+  },
+  {
+    "query": "What do my notes say about transformer interpretability?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve context that mentions attention patterns and interpretability"
+  },
+  {
+    "query": "What do my notes say about database indexing?",
+    "expected_sources": [],
+    "expected_behavior": "refuse because the sample notes do not contain grounded context"
+  }
+]
