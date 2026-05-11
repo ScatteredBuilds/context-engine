@@ -74,6 +74,18 @@ context-engine/
 - `evals/basic_queries.json` contains a small set of manual retrieval checks. These are not benchmark results.
 - `outputs/example_run.md` records expected output shape, not verified runtime output.
 
+## Retrieval verification
+
+Run the basic retrieval checks with:
+
+```bash
+python evals/run_basic_queries.py
+```
+
+The script loads `evals/basic_queries.json`, runs each query through the existing retrieval pipeline, and prints the query, top source, score, and pass/fail result. A case passes when one of its expected sources appears in the retrieved top-k results above the confidence threshold.
+
+The script does not call an LLM and does not measure answer quality.
+
 ## Known dependency requirement
 
 The retrieval path requires `sentence-transformers`.
@@ -96,6 +108,6 @@ The first successful run will also download the configured embedding model.
 
 ## Next milestone
 
-Add a tiny verification script that runs the queries in `evals/basic_queries.json` and reports retrieved sources without claiming benchmark quality.
+Calibrate the retrieval threshold with more sample notes and document failure cases from real runs.
 
 Early buildout.
