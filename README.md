@@ -70,9 +70,10 @@ context-engine/
 
 - `python3 -m py_compile ask.py src/load.py src/chunk.py src/retrieve.py src/ask.py` passes locally.
 - Loader and chunker smoke tests pass against `notes_sample/attention_heads.md`.
-- The full CLI retrieval run has not been verified in this local environment because `sentence-transformers` is not installed.
+- Retrieval verification was run locally with `.venv/bin/python evals/run_basic_queries.py` and passed 3/3 checks.
+- CLI retrieval was run locally with `.venv/bin/python ask.py "What do my notes say about attention heads?"`.
 - `evals/basic_queries.json` contains a small set of manual retrieval checks. These are not benchmark results.
-- `outputs/example_run.md` records expected output shape, not verified runtime output.
+- `outputs/example_run.md` records verified local runtime output.
 
 ## Retrieval verification
 
