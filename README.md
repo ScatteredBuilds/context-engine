@@ -1,8 +1,12 @@
 # context-engine
 
-A local context and retrieval engine for grounding model answers in personal notes.
+A local retrieval system for markdown notes with source-grounded context.
 
-This project starts as a local RAG system over Obsidian notes using Python and local models.
+This project starts as a local RAG system over markdown notes using Python and local embedding models.
+
+## Why this exists
+
+This repo is a small, inspectable RAG slice for learning how note loading, chunking, embedding retrieval, and source refusal fit together before adding answer generation.
 
 ## Setup
 
@@ -49,12 +53,32 @@ I do not have enough grounded context in the notes to answer that.
 
 ## Current structure
 
+```text
 context-engine/
   src/
   notes_sample/
   evals/
   outputs/
   docs/
+```
+
+## Architecture
+
+```text
+Markdown Notes
+      |
+   Loader
+      |
+  Chunking
+      |
+ Embeddings
+      |
+ Retrieval
+      |
+Retrieved Context
+      |
+ Source Files
+```
 
 ## What it does now
 
@@ -107,8 +131,18 @@ The first successful run will also download the configured embedding model.
 - The eval file is a small manual check set, not an automated benchmark.
 - Markdown parsing is basic text loading.
 
-## Next milestone
+## Completed
 
-Calibrate the retrieval threshold with more sample notes and document failure cases from real runs.
+- Recursive markdown note loading with hidden-file skipping.
+- Configurable word chunking with overlap.
+- Sentence-transformer embeddings and cosine-similarity retrieval.
+- Source filenames and low-confidence refusal in CLI output.
+- Manual retrieval checks in `evals/basic_queries.json`.
+
+## Next
+
+- Calibrate the retrieval threshold with more sample notes.
+- Document failure cases from real retrieval runs.
+- Expand manual retrieval checks as new sample notes are added.
 
 Early buildout.
