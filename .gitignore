@@ -216,3 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local project files
+.DS_Store
+logs/
+outputs/raw_response_*.json
