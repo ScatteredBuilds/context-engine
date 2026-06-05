@@ -1,0 +1,102 @@
+[
+  {
+    "query": "What do my notes say about attention heads?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because the query directly names attention heads"
+  },
+  {
+    "query": "How do transformer attention heads compare tokens?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because it discusses attention heads comparing tokens in the context window"
+  },
+  {
+    "query": "What patterns can different heads learn?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because it mentions different heads learning different patterns"
+  },
+  {
+    "query": "What do the notes say about pronouns and earlier nouns?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because it gives pronouns and earlier nouns as an example attention-head pattern"
+  },
+  {
+    "query": "How are punctuation or repeated terms tracked in transformer notes?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because it mentions heads tracking punctuation or repeated terms"
+  },
+  {
+    "query": "What does the note say about attention patterns?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because it discusses attention patterns"
+  },
+  {
+    "query": "Why are attention heads useful for interpretability work?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because it describes why attention heads are useful for interpretability work"
+  },
+  {
+    "query": "Can attention patterns fully explain model behavior?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because it says attention patterns are not a full explanation of model behavior"
+  },
+  {
+    "query": "What clues can attention give about which tokens influenced computation?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because it mentions clues about which tokens influenced a layer's computation"
+  },
+  {
+    "query": "How does a transformer connect words across the context window?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because this indirect wording relates to attention heads comparing tokens in context"
+  },
+  {
+    "query": "What component helps tokens look at other tokens?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because this indirect wording points to attention heads"
+  },
+  {
+    "query": "Do the notes discuss interpretability and token influence together?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because it connects interpretability, attention patterns, and token influence"
+  },
+  {
+    "query": "What do the notes say about patterns, punctuation, and repeated terms?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "retrieve the sample note because it combines multiple concepts present in the note"
+  },
+  {
+    "query": "What are heads?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "ambiguous query that may retrieve the sample note because the corpus only contains attention-head content"
+  },
+  {
+    "query": "What does the note say about terms?",
+    "expected_sources": ["attention_heads.md"],
+    "expected_behavior": "ambiguous query that may retrieve the sample note because it mentions repeated terms"
+  },
+  {
+    "query": "What do my notes say about database indexing?",
+    "expected_sources": [],
+    "expected_behavior": "refuse because the sample notes do not contain grounded context about database indexing"
+  },
+  {
+    "query": "What do my notes say about AWS networking?",
+    "expected_sources": [],
+    "expected_behavior": "refuse because the sample notes do not contain grounded context about AWS networking"
+  },
+  {
+    "query": "What do my notes say about payment outages?",
+    "expected_sources": [],
+    "expected_behavior": "refuse because the sample notes do not contain grounded context about payment outages"
+  },
+  {
+    "query": "What do my notes say about Python package management?",
+    "expected_sources": [],
+    "expected_behavior": "refuse because the sample notes do not contain grounded context about Python package management"
+  },
+  {
+    "query": "What do my notes say about customer support workflows?",
+    "expected_sources": [],
+    "expected_behavior": "refuse because the sample notes do not contain grounded context about customer support workflows"
+  }
+]
