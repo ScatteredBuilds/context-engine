@@ -47,12 +47,15 @@ Similarity method:
 
 ## Current Test Set
 
-The current test set contains 3 queries.
+The basic test set contains 3 queries in `evals/basic_queries.json`.
+
+The expanded test set contains 20 queries in `evals/expanded_queries.json`.
 
 Expected documents:
 
-- 2 queries expect `attention_heads.md`.
-- 1 query expects no source above threshold.
+- The basic test set has 2 queries that expect `attention_heads.md`.
+- The basic test set has 1 query that expects no source above threshold.
+- The expanded test set includes direct queries, synonym-style queries, indirect wording, multi-concept queries, ambiguous wording, and negative test cases.
 
 Evaluation approach:
 
@@ -70,11 +73,28 @@ Evaluation approach:
 
 The saved run reports: `Passed 3/3 retrieval checks`.
 
+### Expanded Evaluation Run
+
+`outputs/expanded_eval_run.md` records an expanded local run against `evals/expanded_queries.json`.
+
+The saved run reports: `Passed 19/20 retrieval checks`.
+
+| Query | Expected Doc | Retrieved? | Evidence |
+| --- | --- | --- | --- |
+| What does the note say about terms? | `attention_heads.md` | No | `outputs/expanded_eval_run.md` records top source `<none above threshold>`, score `n/a`, result `FAIL`. |
+
 ## Failure Analysis
 
 ### Observed Failures
 
-No failures are currently documented in repository evidence.
+One failure is currently documented in repository evidence.
+
+Failure:
+
+- Query: `What does the note say about terms?`
+- Expected behavior: retrieve `attention_heads.md`.
+- Observed behavior: no source was retrieved above the threshold.
+- Likely root cause: the query is ambiguous and uses a broad word, `terms`. The sample note mentions `repeated terms`, but the query may not provide enough retrieval signal to pass the current threshold.
 
 ### Potential Failures
 
@@ -119,7 +139,8 @@ No answer generation:
 ## Limitations
 
 - The evaluation uses one sample markdown note.
-- The test set contains only 3 manual queries.
+- The basic test set contains only 3 manual queries.
+- The expanded test set is still manually authored and uses the same single-note corpus.
 - There is no benchmark dataset.
 - The evaluation checks retrieval only, not answer quality.
 - The confidence threshold is simple and not calibrated with a larger corpus.
