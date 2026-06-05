@@ -8,6 +8,56 @@ This project starts as a local RAG system over markdown notes using Python and l
 
 This repo is a small, inspectable RAG slice for learning how note loading, chunking, embedding retrieval, and source refusal fit together before adding answer generation.
 
+## Project Status
+
+Status: Early buildout.
+
+Current focus: retrieval verification over sample markdown notes.
+
+Current evidence:
+
+- `outputs/example_run.md` records a local run where `evals/run_basic_queries.py` passed 3/3 retrieval checks.
+- `evals/basic_queries.json` contains a small manual retrieval check set.
+- The current CLI retrieves note chunks and source filenames. It does not generate a final natural-language answer.
+
+## Why I Built This
+
+This project isolates the retrieval part of a local RAG system so it can be inspected before adding answer generation.
+
+The current evaluation asks a concrete integration-testing question: when a query is issued, does the expected source material appear in the top-k retrieval results?
+
+## Simple Architecture Diagram
+
+```text
+Markdown notes
+    |
+    v
+Recursive loader
+    |
+    v
+Word chunking
+    |
+    v
+Sentence-transformers embeddings
+    |
+    v
+Cosine similarity retrieval
+    |
+    v
+Top-k results
+    |
+    v
+Threshold check
+    |
+    +--> retrieved chunks and source filenames
+    |
+    +--> refusal when the top score is below threshold
+```
+
+## Evaluation Report
+
+See [Context Engine Evaluation Report](evals/README.md) for the current retrieval test set, observed results, documented failure modes, and next evaluation cases.
+
 ## Setup
 
 ```bash
@@ -123,13 +173,15 @@ pip install -r requirements.txt
 
 The first successful run will also download the configured embedding model.
 
-## Current limitations
+## Limitations
 
 - It retrieves context, but does not generate a final natural-language answer yet.
 - The confidence threshold is simple and will need calibration.
 - Embeddings are recomputed on every run.
 - The eval file is a small manual check set, not an automated benchmark.
 - Markdown parsing is basic text loading.
+- The current evaluation uses one sample markdown note.
+- The current test set contains only 3 manual queries.
 
 ## Completed
 
