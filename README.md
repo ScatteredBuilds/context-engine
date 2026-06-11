@@ -4,6 +4,13 @@ A local retrieval system for markdown notes with source-grounded context.
 
 This project starts as a local RAG system over markdown notes using Python and local embedding models.
 
+## Best Evidence
+
+- `outputs/expanded_eval_run.md` records an expanded retrieval evaluation run that passed 19/20 checks.
+- The documented miss was an ambiguous query: `What does the note say about terms?`
+- `evals/README.md` documents the evaluation method, observed results, and failure analysis.
+- `docs/failure_modes.md` documents known retrieval failure modes and current system limits.
+
 ## Why this exists
 
 This repo is a small, inspectable RAG slice for learning how note loading, chunking, embedding retrieval, and source refusal fit together before adding answer generation.
