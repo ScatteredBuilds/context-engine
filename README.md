@@ -1,207 +1,78 @@
 # context-engine
 
-A local retrieval system for markdown notes with source-grounded context.
+A small local semantic-retrieval pipeline for Markdown notes. It isolates the retrieval stage of a retrieval-augmented generation system so loading, chunking, ranking, source attribution, and refusal behavior can be inspected without an answer-generating model.
 
-This project starts as a local RAG system over markdown notes using Python and local embedding models.
+## Status
 
-## Best Evidence
+Learning project / working prototype. The CLI retrieves relevant note chunks; it does not generate a natural-language answer.
 
-- `outputs/expanded_eval_run.md` records an expanded retrieval evaluation run that passed 19/20 checks.
-- The documented miss was an ambiguous query: `What does the note say about terms?`
-- `evals/README.md` documents the evaluation method, observed results, and failure analysis.
-- `docs/failure_modes.md` documents known retrieval failure modes and current system limits.
+## Problem
 
-## Why this exists
+Before generated answers can be evaluated for grounding, the retrieval layer must reliably find relevant source material and decline unrelated queries. This project tests that narrower problem against a deliberately small sample corpus.
 
-This repo is a small, inspectable RAG slice for learning how note loading, chunking, embedding retrieval, and source refusal fit together before adding answer generation.
+## Implemented
 
-## Project Status
-
-Status: Early buildout.
-
-Current focus: retrieval verification over sample markdown notes.
-
-Current evidence:
-
-- `outputs/example_run.md` records a local run where `evals/run_basic_queries.py` passed 3/3 retrieval checks.
-- `evals/basic_queries.json` contains a small manual retrieval check set.
-- The current CLI retrieves note chunks and source filenames. It does not generate a final natural-language answer.
-
-## Why I Built This
-
-This project isolates the retrieval part of a local RAG system so it can be inspected before adding answer generation.
-
-The current evaluation asks a concrete integration-testing question: when a query is issued, does the expected source material appear in the top-k retrieval results?
-
-## Simple Architecture Diagram
-
-```text
-Markdown notes
-    |
-    v
-Recursive loader
-    |
-    v
-Word chunking
-    |
-    v
-Sentence-transformers embeddings
-    |
-    v
-Cosine similarity retrieval
-    |
-    v
-Top-k results
-    |
-    v
-Threshold check
-    |
-    +--> retrieved chunks and source filenames
-    |
-    +--> refusal when the top score is below threshold
-```
-
-## Evaluation Report
-
-See [Context Engine Evaluation Report](evals/README.md) for the current retrieval test set, observed results, documented failure modes, and next evaluation cases.
-
-## Setup
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-The first run will download the sentence-transformers embedding model.
-
-## Usage
-
-```bash
-python ask.py "What do my notes say about attention heads?"
-```
-
-Optional settings:
-
-```bash
-python ask.py "What do my notes say about attention heads?" --top-k 2 --chunk-size 80 --overlap 15
-```
-
-## Example output
-
-The example output below shows the expected output shape. It is not a benchmark.
-
-```text
-Retrieved chunks
-================
-Source: attention_heads.md | score: <score from local embedding model>
-Attention heads let a transformer compare each token with other tokens in the context window...
-
-Sources
-=======
-- attention_heads.md
-```
-
-If the retrieved context is weak, the command refuses to answer:
-
-```text
-I do not have enough grounded context in the notes to answer that.
-```
-
-## Current structure
-
-```text
-context-engine/
-  src/
-  notes_sample/
-  evals/
-  outputs/
-  docs/
-```
+- Recursive Markdown loading with hidden-file exclusion
+- Configurable word-based chunks and overlap
+- `sentence-transformers/all-MiniLM-L6-v2` embeddings
+- Cosine-similarity ranking and configurable top-k retrieval
+- Source filenames in CLI output
+- Refusal when the top score is below a fixed threshold
+- JSON-defined retrieval checks with pass/fail output
 
 ## Architecture
 
 ```text
-Markdown Notes
-      |
-   Loader
-      |
-  Chunking
-      |
- Embeddings
-      |
- Retrieval
-      |
-Retrieved Context
-      |
- Source Files
+Markdown files -> loader -> word chunks -> embeddings
+                                         |
+query ----------> embedding -------------+-> cosine ranking -> top-k results
+                                                               |
+                                      threshold ----------------+-> sources or refusal
 ```
 
-## What it does now
+`ask.py` is a thin entry point to `src.ask`. The implementation is split across `src/load.py`, `src/chunk.py`, `src/retrieve.py`, and `src/ask.py`.
 
-- recursively loads markdown notes
-- skips hidden files
-- chunks notes with configurable overlap
-- embeds chunks with sentence-transformers
-- retrieves chunks with cosine similarity
-- prints source filenames
-- refuses when the top score is below a threshold
+## Setup and usage
 
-## Verification status
+Python 3.10 or newer is required.
 
-- `python3 -m py_compile ask.py src/load.py src/chunk.py src/retrieve.py src/ask.py` passes locally.
-- Loader and chunker smoke tests pass against `notes_sample/attention_heads.md`.
-- Retrieval verification was run locally with `.venv/bin/python evals/run_basic_queries.py` and passed 3/3 checks.
-- CLI retrieval was run locally with `.venv/bin/python ask.py "What do my notes say about attention heads?"`.
-- `evals/basic_queries.json` contains a small set of manual retrieval checks. These are not benchmark results.
-- `outputs/example_run.md` records verified local runtime output.
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python ask.py "What do my notes say about attention heads?"
+```
 
-## Retrieval verification
+The first retrieval run downloads the configured embedding model. Use your own notes directory or adjust retrieval settings:
 
-Run the basic retrieval checks with:
+```bash
+python ask.py "your question" --notes-dir path/to/notes --top-k 2 --threshold 0.35
+```
+
+## Evaluation and testing
 
 ```bash
 python evals/run_basic_queries.py
+python evals/run_basic_queries.py --eval-file evals/expanded_queries.json
 ```
 
-The script loads `evals/basic_queries.json`, runs each query through the existing retrieval pipeline, and prints the query, top source, score, and pass/fail result. A case passes when one of its expected sources appears in the retrieved top-k results above the confidence threshold.
+A case passes when an expected source appears among results at or above the threshold. For negative cases, it passes when no result clears the threshold. These checks evaluate retrieval behavior only—not answer quality, relevance judgments at scale, or production readiness.
 
-The script does not call an LLM and does not measure answer quality.
+Committed run records show 3/3 basic checks and 19/20 expanded checks. The expanded set preserves one failure for the ambiguous query `What does the note say about terms?`; see [evals/README.md](evals/README.md) and [outputs/expanded_eval_run.md](outputs/expanded_eval_run.md).
 
-## Known dependency requirement
-
-The retrieval path requires `sentence-transformers`.
-
-Install dependencies before running the CLI:
+For dependency-free verification of the loader and chunker:
 
 ```bash
-pip install -r requirements.txt
+python -m py_compile ask.py src/load.py src/chunk.py src/retrieve.py src/ask.py evals/run_basic_queries.py
 ```
-
-The first successful run will also download the configured embedding model.
 
 ## Limitations
 
-- It retrieves context, but does not generate a final natural-language answer yet.
-- The confidence threshold is simple and will need calibration.
-- Embeddings are recomputed on every run.
-- The eval file is a small manual check set, not an automated benchmark.
-- Markdown parsing is basic text loading.
-- The current evaluation uses one sample markdown note.
-- The current test set contains only 3 manual queries.
+- The committed corpus contains one sample note, so the reported counts are smoke-test evidence, not benchmark results.
+- The fixed `0.35` threshold is not calibrated for a larger or different corpus.
+- Embeddings are recomputed on every command and model loading dominates small runs.
+- Chunking is whitespace-based and does not preserve Markdown structure.
+- The system returns excerpts rather than generating an answer.
+- Model download and retrieval require network access on the first run.
 
-## Completed
-
-- Recursive markdown note loading with hidden-file skipping.
-- Configurable word chunking with overlap.
-- Sentence-transformer embeddings and cosine-similarity retrieval.
-- Source filenames and low-confidence refusal in CLI output.
-- Manual retrieval checks in `evals/basic_queries.json`.
-
-## Next
-
-- Calibrate the retrieval threshold with more sample notes.
-- Document failure cases from real retrieval runs.
-- Expand manual retrieval checks as new sample notes are added.
-
-Early buildout.
+Known failure modes are documented in [docs/failure_modes.md](docs/failure_modes.md).
