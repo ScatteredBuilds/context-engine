@@ -58,7 +58,7 @@ python evals/run_basic_queries.py --eval-file evals/expanded_queries.json
 
 A case passes when an expected source appears among results at or above the threshold. For negative cases, it passes when no result clears the threshold. These checks evaluate retrieval behavior only—not answer quality, relevance judgments at scale, or production readiness.
 
-Committed run records show 3/3 basic checks and 19/20 expanded checks. The expanded set preserves one failure for the ambiguous query `What does the note say about terms?`; see [evals/README.md](evals/README.md) and [outputs/expanded_eval_run.md](outputs/expanded_eval_run.md).
+Committed run records show 3/3 basic checks and 19/20 expanded checks. Both use a one-document sample corpus, so these are smoke-test results rather than evidence of broad retrieval accuracy. The expanded run preserves one failure for `What does the note say about terms?`: no result cleared the configured threshold. See [evals/README.md](evals/README.md) and [outputs/expanded_eval_run.md](outputs/expanded_eval_run.md).
 
 For dependency-free verification of the loader and chunker:
 
